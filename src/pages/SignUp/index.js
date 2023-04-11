@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
-import useAuth from "../../hooks/useAuth";
+import logo from "../../assets/images/logo.svg";
 
-import Logo from "../../components/Logo";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 
 import * as C from "./styles";
 
-const Signup = () => {
+const Signup = ({ history }) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -17,10 +18,8 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const { signup } = useAuth();
-
-  const handleSignUp = () => {
-    if (!email | !passwordConfirm | !password) {
+  const handleSignUp = async () => {
+    if (!name | !email | !passwordConfirm | !password) {
       setError("Preencha todos os campos");
       return;
     } else if (password !== passwordConfirm) {
@@ -28,22 +27,37 @@ const Signup = () => {
       return;
     }
 
-    const res = signup(email, password);
+    const response = await api.post("/signup", {
+      name,
+      email,
+      password,
+      passwordConfirm,
+    });
 
-    if (res) {
-      setError(res);
-      return;
+    if (response.data.error) {
+      setError(response.data.error);
+    } else {
+      const { _id } = response.data.user;
+
+      localStorage.setItem("user", _id);
+      navigate("/dashboard");
     }
-
-    alert("Usuário cadatrado com sucesso!");
-    navigate("/");
   };
 
   return (
     <C.Container>
-      <Logo />
+      <C.Logo>
+        <img src={logo} className="App-logo" alt="logo" />
+      </C.Logo>
+
       <C.Content>
-        <C.Label>Cadastrar</C.Label>
+        <C.Label>Registrar-se</C.Label>
+        <Input
+          type="text"
+          placeholder="Nome"
+          value={name}
+          onChange={(e) => [setName(e.target.value), setError("")]}
+        />
         <Input
           type="email"
           placeholder="Email"

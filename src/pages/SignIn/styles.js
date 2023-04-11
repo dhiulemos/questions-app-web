@@ -5,11 +5,18 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 8rem;
+  gap: 4rem;
   background-color: #171515;
   padding: 5%;
   min-height: 100vh;
   width: 100%;
+`;
+
+export const Logo = styled.div`
+  .App-logo {
+    height: 10rem;
+    pointer-events: none;
+  }
 `;
 
 export const Content = styled.div`

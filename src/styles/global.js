@@ -70,7 +70,8 @@ const GlobalStyle = createGlobalStyle`
 
   a,
   button,
-  input {
+  input,
+  textarea {
     appearance: none;
     font-family: inherit;
     background-color: transparent;
@@ -87,6 +88,11 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     font-family: inherit;
     list-style: none;
+  }
+
+  span, p {
+    font-size: 1.6rem;
+    font-family: inherit;
   }
 `;
 

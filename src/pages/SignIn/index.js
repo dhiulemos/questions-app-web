@@ -1,42 +1,48 @@
 import React, { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
-import useAuth from "../../hooks/useAuth";
+import logo from "../../assets/images/logo.svg";
 
-import Logo from "../../components/Logo";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 
 import * as C from "./styles";
 
 const Signin = () => {
-  const { signin } = useAuth();
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
     if (!email | !password) {
       setError("Preencha todos os campos");
       return;
     }
 
-    const res = signin(email, password);
+    const response = await api.post("/signin", {
+      email,
+      password,
+    });
 
-    if (res) {
-      setError(res);
-      return;
+    if (response.data.error) {
+      setError(response.data.error);
+    } else {
+      const { _id } = response.data.user;
+
+      localStorage.setItem("user", _id);
+      navigate("/dashboard");
     }
-
-    navigate("/dashboard");
   };
 
   return (
     <C.Container>
-      <Logo />
+      <C.Logo>
+        <img src={logo} className="App-logo" alt="logo" />
+      </C.Logo>
+
       <C.Content>
         <C.Label>Entrar</C.Label>
         <Input
@@ -56,7 +62,7 @@ const Signin = () => {
         <C.LabelSignUp>
           Não tem uma conta?
           <C.Strong>
-            <Link to="/signup">&nbsp;Cadastre-se</Link>
+            <Link to="/signup">&nbsp;Registre-se</Link>
           </C.Strong>
         </C.LabelSignUp>
       </C.Content>
